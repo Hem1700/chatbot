@@ -10,7 +10,6 @@ from keras.layers import Dense, Activation, Dropout
 from keras.optimizer import SGD
 import random
  
-
 words = []
 classes = []
 documents = []
@@ -58,6 +57,33 @@ pickle.dump(words, open('words.pkl', 'wb'))
 pickle.dump(classes, open('classes.pkl','wb'))
 
 
+# create our training data
+training = []
 
+# create an empty array for output
+output_empty = [0] * len(classes)
+
+#training set, bag of words for each sentence
+for doc in documents:
+    #initialize bag of words
+    bag = []
+    # list of tokenized words for the pattern
+    pattern_words = doc[0]
+
+    #lemmatizinig each word - create base word , in attempt to represnt related words
+    pattern_words = [lemmatizer.lemmatize(word.lower()) for word in pattern_words]
+
+    # creating baf og words array with 1, if word match found in current pattern
+    for w in words:
+        bag.append(1) if w in pattern_words else bag.append(0)
+
+        # output is a '0' for each tag and '1' for current tag(for each pattern)
+        output_row = list(output_empty)
+        output_row[classes.index(doc[1])] = 1
+        training.append([bag, output_row])
+
+train_x = list(training[:,0])
+train_y = list(training[:,1])
+print("Training data created")
 
 
